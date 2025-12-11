@@ -25,7 +25,7 @@ The entire project is run in two distinct phases: Model Training (in the noteboo
 
 ## 2. Model Training and Saving
 
-The analysis notebook must be run first to train the model, evaluate performance, and generate the necessary deployment files in the `model/` folder.
+The analysis notebook must be run first to train the model, evaluate performance, and generate the necessary deployment artifacts (joblib files) in the model/ folder. For immediate API testing, however, these artifacts are pre-committed to the repository for user convenience.
 
 1.  **Run the Notebook**
     Open **`Bengaluru LST Prediction API.ipynb`** (or use your exact file name) and execute **all cells.**
