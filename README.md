@@ -1,5 +1,10 @@
 # Bengaluru_LST_Prediction_API
-This repository showcases an end-to-end MLOps workflow, covering data engineering (wrangling, feature extraction), model creation (Linear Regression) with model metrics evaluation (Mean Absolute Error, Root Mean Square Error), and finally, API deployment for real-time Land Surface Temperature (LST) prediction based on Urban Heat Island (UHI) factors.
+
+This repository showcases an **end-to-end MLOps pipeline** project, demonstrating the full cycle of creating a predictive product. The goal is to predict Land Surface Temperature (LST) based on Urban Heat Island (UHI) factors in Bengaluru. The workflow covers:
+
+* **Data Engineering:** Geospatial data wrangling and feature extraction (Built-up % and Green %).
+* **Model Creation:** Linear Regression training and validation (Mean Absolute Error, Root Mean Square Error).
+* **Model Deployment:** Creating a ready-to-use API for real-time LST prediction.
 
 ## 1. Setup
 
@@ -13,22 +18,22 @@ The entire project is run in two distinct phases: Model Training (in the noteboo
     ```
 
 2.  **Install Dependencies**
-    Install all required packages:
+    Install all required packages listed in `requirements.txt`:
     ```bash
     pip install -r requirements.txt
     ```
 
 ## 2. Model Training and Saving
 
-You must run the analysis notebook first to train the model and generate the necessary deployment files in the `model/` folder.
+The analysis notebook must be run first to train the model, evaluate performance, and generate the necessary deployment files in the `model/` folder.
 
 1.  **Run the Notebook**
-    Open **`UHI_Bengaluru.ipynb`** and execute **all cells.**
+    Open **`Bengaluru LST Prediction API.ipynb`** (or use your exact file name) and execute **all cells.**
     The final cells automatically save the trained model as `model/lst_model.joblib` and the feature names as `model/Xcolumn_names.joblib`.
 
 ## 3. API Deployment and Testing
 
-Once the model files are saved, you can launch the prediction service.
+Once the model files are saved, you can launch the prediction service. Note the built-in error handling in `LST_predictor.py` ensures the server will not start if the model files are missing.
 
 1.  **Start the API Server**
     Open a terminal window in the project directory and run:
@@ -53,3 +58,12 @@ Once the model files are saved, you can launch the prediction service.
     **Expected Result:** A JSON response with the predicted temperature (e.g., `{"predicted_mean_lst_c": 30.6387}`).
 
 3.  **Stop:** Press `CTRL + C` in the terminal where the server is running.
+
+---
+
+## 4. Further Reading and Strategic Context
+
+The technical work in this repository is part of a larger mission to drive data-informed sustainable design.
+
+* **Part 1: The Technical Deep Dive** - *[Blog Post link]*
+* **Part 2: The Strategic Vision** - *[Blog Post link]*
