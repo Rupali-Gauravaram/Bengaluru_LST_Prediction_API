@@ -1,7 +1,7 @@
 # Dataset 1: Land Surface Temperature (LST) Metrics 
 **Description:**  
 This dataset contains the calculated long-term mean Land Surface Temperature (LST) in Celsius for the 198 BBMP Wards.  
-It serves as the **dependent variable (y)** for the Urban Heat Island (UHI) prediction model.
+It serves as the **dependent variable (y)** for the Land Surface Temperature (LST) prediction model.
 
 ## 1. Data Source & Extraction Summary
 
