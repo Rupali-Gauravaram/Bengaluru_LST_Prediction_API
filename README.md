@@ -62,7 +62,7 @@ Once the model files are saved, you can launch the prediction service. Note the 
 
 ## 4. Further Reading and Strategic Context
 
-The technical work in this repository is part of a larger mission to drive data-informed sustainable design.
+The technical work in this repository is part of a larger mission to drive data-informed sustainable design. To know more follow the links below:
 
-* **Part 1: The Technical Deep Dive** - *[Blog Post link]*
-* **Part 2: The Strategic Vision** - *[Blog Post link]*
+* **Part 1: The Technical Deep Dive** - *[[Blog Post link](https://chaiandcode.wordpress.com/2025/12/12/bengaluru-lst-prediction-api-part-1/)]*
+* **Part 2: The Strategic Vision** - *[[Blog Post link](https://chaiandcode.wordpress.com/2025/12/12/bengaluru-lst-prediction-api-part-2/)]*
