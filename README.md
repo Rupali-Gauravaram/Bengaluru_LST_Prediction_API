@@ -1,6 +1,6 @@
 # Bengaluru_LST_Prediction_API
 
-This repository showcases an **end-to-end MLOps pipeline** project, demonstrating the full cycle of creating a predictive product. The goal is to predict Land Surface Temperature (LST) based on Land Use/Land Cover across 197 BBMP wards in Bengaluru. The workflow covers:
+This repository showcases an **end-to-end MLOps pipeline** project, demonstrating the full cycle of creating a predictive product. The goal is to predict Land Surface Temperature (LST) based on Land Use/Land Cover across 198 BBMP wards in Bengaluru. The workflow covers:
 
 * **Data Engineering:** Geospatial data wrangling and feature extraction (Built-up % and Green Cover%).
 * **Model Creation:** Linear Regression training and validation (Mean Absolute Error, Root Mean Square Error).
@@ -62,7 +62,7 @@ Once the model files are saved, you can launch the prediction service. Note the 
 
 ## 4. Further Reading and Strategic Context
 
-The technical work in this repository is part of a larger mission to drive data-informed sustainable design.
+The technical work in this repository is part of a larger mission to drive data-informed sustainable design. To know more follow the links below:
 
-* **Part 1: The Technical Deep Dive** - *[Blog Post link]*
-* **Part 2: The Strategic Vision** - *[Blog Post link]*
+* **Part 1: The Technical Deep Dive** - *[[Blog Post link](https://chaiandcode.wordpress.com/2025/12/12/bengaluru-lst-prediction-api-part-1/)]*
+* **Part 2: The Strategic Vision** - *[[Blog Post link](https://chaiandcode.wordpress.com/2025/12/12/bengaluru-lst-prediction-api-part-2/)]*
