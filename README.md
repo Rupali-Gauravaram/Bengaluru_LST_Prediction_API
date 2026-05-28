@@ -10,9 +10,8 @@ This repository showcases an **end-to-end MLOps pipeline** project, demonstratin
 The entire project is run in two distinct phases: Model Training (in the notebook) and API Deployment (using a Python script).
 
 1.  **Clone the Repository**
-    Use your specific repository link to download the project:
     ```bash
-    git clone [https://github.com/Rupali-Gauravaram/Bengaluru_LST_Prediction_API.git](https://github.com/Rupali-Gauravaram/Bengaluru_LST_Prediction_API.git)
+    git clone https://github.com/Rupali-Gauravaram/Bengaluru_LST_Prediction_API.git
     cd Bengaluru_LST_Prediction_API
     ```
 
@@ -51,7 +50,7 @@ Once the model files are saved, you can launch the prediction service. Note the 
     curl -X POST \
       -H "Content-Type: application/json" \
       -d '{"builtup_pct": 60.0, "green_pct": 20.0}' \
-      [http://127.0.0.1:5000/predict_lst](http://127.0.0.1:5000/predict_lst)
+      http://127.0.0.1:5000/predict_lst
     ```
 
     **Expected Result:** A JSON response with the predicted temperature (e.g., `{"predicted_mean_lst_c": 30.6387}`).
@@ -64,5 +63,5 @@ Once the model files are saved, you can launch the prediction service. Note the 
 
 The technical work in this repository is part of a larger mission to drive data-informed sustainable design. To know more follow the links below:
 
-* **Part 1: The Technical Deep Dive** - *[[Blog Post link](https://chaiandcode.wordpress.com/2025/12/12/bengaluru-lst-prediction-api-part-1/)]*
-* **Part 2: The Strategic Vision** - *[[Blog Post link](https://chaiandcode.wordpress.com/2025/12/12/bengaluru-lst-prediction-api-part-2/)]*
+* **Part 1: The Technical Deep Dive** — [Read on Chai & Code](https://chaiandcode.wordpress.com/2025/12/12/bengaluru-lst-prediction-api-part-1/)
+* **Part 2: The Strategic Vision** — [Read on Chai & Code](https://chaiandcode.wordpress.com/2025/12/12/bengaluru-lst-prediction-api-part-2/)
