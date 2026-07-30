@@ -1,6 +1,6 @@
 # Bengaluru Land Surface Temperature Prediction API
 
-**An end-to-end MLOps pipeline predicting ward-level mean Land Surface Temperature across 198 BBMP wards of Bengaluru from satellite-derived land-use composition features. The model is exposed as a Flask REST service and serves as the foundational predictive component on which subsequent supervised and unsupervised analyses are built.**
+**An end-to-end machine learning pipeline predicting ward-level mean Land Surface Temperature across 198 BBMP wards of Bengaluru from satellite-derived land-use composition features. The model is trained in scikit-learn and served as a Flask REST API, providing the foundational predictive component on which subsequent supervised and unsupervised analyses are built.**
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg) ![Python](https://img.shields.io/badge/Python-3.10+-blue.svg) ![scikit-learn](https://img.shields.io/badge/scikit--learn-1.7-orange.svg) ![Flask](https://img.shields.io/badge/Flask-3.1-lightgrey.svg)
 
