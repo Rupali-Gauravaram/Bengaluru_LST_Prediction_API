@@ -1,6 +1,6 @@
 # Bengaluru Land Surface Temperature Prediction API
 
-**An end-to-end machine learning pipeline predicting ward-level mean Land Surface Temperature across 198 BBMP wards of Bengaluru from satellite-derived land-use composition features. The model is trained in scikit-learn and served as a Flask REST API, providing the foundational predictive component on which subsequent supervised and unsupervised analyses are built.**
+**I built a machine learning model that predicts the average land surface temperature of a Bengaluru ward from two land-use features: how built-up it is and how green it is. The model covers 198 BBMP wards, is trained in scikit-learn, and is served as a Flask REST API. It is the starting point for two follow-up projects on the same data.**
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg) ![Python](https://img.shields.io/badge/Python-3.10+-blue.svg) ![scikit-learn](https://img.shields.io/badge/scikit--learn-1.7-orange.svg) ![Flask](https://img.shields.io/badge/Flask-3.1-lightgrey.svg)
 
@@ -8,27 +8,29 @@
 
 ## Motivation
 
-Ward-level estimates of Land Surface Temperature (LST) for Bengaluru are typically obtained either by direct extraction from satellite imagery — a computationally and procedurally expensive process requiring repeated invocations of remote-sensing platforms — or from one-off academic studies whose outputs are not available through a programmatic interface. Neither option supports the latency and reproducibility requirements of an applied climate-intelligence tool.
+Getting ward-level Land Surface Temperature (LST) for Bengaluru usually means extracting it from satellite imagery each time, which is slow, or relying on one-off academic studies whose results cannot be queried by a program. Neither works well for a tool that needs quick, repeatable answers.
 
-This repository develops a parsimonious supervised model that returns a predicted mean LST in response to a small number of inputs describing the land-use composition of a candidate ward. The model is deployed behind a Flask REST API, making LST estimates available as a programmatic call rather than as the result of a manual extraction. The deployment is the principal contribution of this repository; the analytical extensions are developed in two companion repositories cross-referenced below.
+This project builds a small model that returns a predicted mean LST from two inputs describing a ward's land use. I put it behind a Flask REST API, so an estimate is one request away. The deployed API is the main point of this repository. The analysis is taken further in the two companion repositories listed below.
 
 ---
 
 ## Data
 
-The target variable is the long-term mean Land Surface Temperature in Celsius per BBMP ward, derived from the **MODIS/061/MOD11A2** 8-day composite product at 1 km spatial resolution. Values were extracted across the three-year window 2022–2024 to smooth seasonal variability, scaled by the MODIS conversion factor of 0.02, converted from Kelvin to Celsius, and aggregated to ward geometry via `ee.Reducer.mean()` in Google Earth Engine.
+**Target:** the long-term mean Land Surface Temperature per BBMP ward, in Celsius. It comes from the **MODIS/061/MOD11A2** 8-day product at 1 km resolution. I used the three years 2022 to 2024 to smooth out seasonal changes, applied the MODIS scale factor of 0.02, converted from Kelvin to Celsius, and averaged over each ward's boundary with `ee.Reducer.mean()` in Google Earth Engine.
 
-The predictor variables are built-up percentage and green-cover percentage per ward, derived from Sentinel-2 land-classification products and aggregated to the same ward geometry. The resulting dataset comprises 198 records with no missing values.
+**Features:** built-up percentage and green-cover percentage per ward, from Sentinel-2 land-classification products, averaged over the same ward boundaries.
+
+The final dataset has 198 rows and no missing values.
 
 ---
 
 ## Method
 
-A **linear regression** model was fitted with the two ward-level land-use features as predictors and mean LST as the target. The model was implemented in scikit-learn and serialised to `joblib` artefacts for deployment. The fitted model and the feature-name ordering are loaded once at API startup and held in memory for inference.
+I fitted a **linear regression** with the two land-use features as inputs and mean LST as the target. The model is built in scikit-learn and saved with `joblib`. The API loads the model and the feature order once at startup and keeps them in memory.
 
-The choice of a linear model with a restricted feature set was deliberate. Higher-capacity alternatives such as gradient-boosted ensembles would likely yield marginally lower error but would forfeit the directional interpretability of individual coefficients — a property that is itself a primary output of the analysis when reported in a planning context.
+I chose a simple linear model with two features on purpose. A more complex model, such as gradient boosting, might give a slightly lower error, but the coefficients would no longer be easy to read. For planning, being able to say how much each feature moves the temperature is itself a useful result.
 
-The API surface consists of a single POST endpoint, `/predict_lst`, accepting a JSON payload of two numeric fields and returning a predicted LST as a JSON response. Input validation and model-file availability checks are performed at startup, with the service refusing to start if the serialised artefacts are absent.
+The API has one POST endpoint, `/predict_lst`. It takes a JSON body with two numbers and returns the predicted LST as JSON. At startup the service checks that the model files exist, and refuses to start if they are missing.
 
 ---
 
@@ -38,44 +40,46 @@ The API surface consists of a single POST endpoint, `/predict_lst`, accepting a 
 |---|---|
 | Algorithm | Linear Regression (scikit-learn) |
 | Features | `BuiltUp_Pct`, `Green_Pct` |
-| Target | `Mean_LST_C` (long-term mean LST in °C, 2022–2024) |
+| Target | `Mean_LST_C` (long-term mean LST in °C, 2022 to 2024) |
 | Mean Absolute Error | 0.39 °C |
 | Root Mean Squared Error | 0.48 °C |
 | Granularity | 198 BBMP wards |
 | Spatial resolution | 1 km (MODIS MOD11A2) |
 | Deployment | Flask REST API (port 5000) |
 
-The reported MAE of 0.39 °C indicates that, on the held-out test set, the model's mean ward-level prediction deviates from the satellite-derived mean by approximately four-tenths of a degree Celsius. In the context of inter-ward LST variation (a range of roughly 5 °C across the 198 wards), this error is small relative to the signal and is suitable for ward-level planning and prioritisation tasks.
+An MAE of 0.39 °C means that, on the test set, the prediction is off by about four-tenths of a degree on average. The wards differ from each other by about 5 °C, so this error is small compared with the differences the model needs to capture. That makes it suitable for ward-level planning and prioritisation.
 
-Full diagnostic plots — correlation heatmap, residual analysis, and predicted-versus-actual scatter — are reported in the companion repository [bengaluru-uhi-prediction](https://github.com/Rupali-Gauravaram/bengaluru-uhi-prediction), which extends this work with explicit downstream prioritisation logic.
+The diagnostic plots (correlation heatmap, residuals, predicted vs actual) are in the companion repository [bengaluru-uhi-prediction](https://github.com/Rupali-Gauravaram/bengaluru-uhi-prediction), which adds a prioritisation step on top of this model.
 
 ---
 
-## Discussion
+## How this fits with my other repositories
 
-### Positioning within a broader research programme
+This is the first of three repositories on Bengaluru ward-level climate analysis:
 
-This repository is the foundational component of a three-repository sequence on Bengaluru ward-level climate analysis. The present work develops the prediction model and exposes it as a deployable service. The [bengaluru-uhi-prediction](https://github.com/Rupali-Gauravaram/bengaluru-uhi-prediction) repository extends the model with diagnostic validation, coefficient interpretation, and a downstream cool-roof prioritisation procedure. The [bengaluru-ward-climate-clustering](https://github.com/Rupali-Gauravaram/bengaluru-ward-climate-clustering) repository applies unsupervised K-Means partitioning to a four-feature variant of the dataset and produces a typology of ward archetypes that, independently, surfaces the same high-vulnerability wards identified by the supervised prioritisation. The convergence of the two methodologically distinct analyses on a common intervention set is established formally in the discussion section of each downstream repository.
+1. **This repository** builds the prediction model and serves it as an API.
+2. **[bengaluru-uhi-prediction](https://github.com/Rupali-Gauravaram/bengaluru-uhi-prediction)** adds diagnostics, reads the coefficients, and ranks wards for cool-roof work.
+3. **[bengaluru-ward-climate-clustering](https://github.com/Rupali-Gauravaram/bengaluru-ward-climate-clustering)** groups the wards with K-Means using four features. Without using any labels, it points to the same high-risk wards as the ranking in repository 2.
 
-### Deployment as the principal contribution
+Two different methods arriving at the same wards gives more confidence in the result.
 
-A predictive model whose outputs require manual extraction is, for applied purposes, equivalent to no model at all. The packaging of the trained regression as a callable REST endpoint — with deterministic model loading, explicit error handling on missing artefacts, and a stable JSON interface — is therefore not a secondary engineering concern but the principal value-add of this repository over a bare notebook. Subsequent work in the research programme assumes the model is available as a service and builds analytical layers above it.
+**Why the API matters:** a model whose output has to be extracted by hand is not much use in practice. Serving it as an endpoint, with the model loaded once, clear errors when files are missing, and a stable JSON format, is what turns a notebook into something another tool can use.
 
 ---
 
 ## Limitations
 
-- **Spatial resolution.** The 1 km MODIS resolution is appropriate for ward-level planning but cannot resolve sub-ward heterogeneity. Outputs should not be used for building-scale design decisions.
-- **Land Surface Temperature versus ambient air temperature.** The target variable is LST, which is the appropriate metric for radiative balance and reflective-surface analysis but is not equivalent to ambient air temperature as experienced by residents.
-- **Restricted feature scope.** The model uses two predictors. Inclusion of additional features (albedo, water-body proximity, elevation) would likely improve predictive accuracy at the cost of coefficient interpretability.
-- **Static features.** Predictors are derived from long-term means and do not capture rapid changes in land-use composition.
-- **Ward boundary set.** The analysis uses the 198-ward BBMP boundary set rather than the current 369-ward Greater Bengaluru Authority boundary. Re-extraction onto the GBA boundary is identified as the natural extension of this work.
+- **Spatial resolution.** 1 km MODIS data suits ward-level planning but cannot show differences inside a ward. It should not be used for decisions about single buildings.
+- **Surface temperature is not air temperature:** LST is the right measure for studying reflective surfaces, but it is not the air temperature people feel.
+- **Only two features:** Adding albedo, distance to water, or elevation would probably improve accuracy, but the coefficients would be harder to interpret.
+- **Static features:** The inputs are long-term averages, so they do not capture fast changes in land use.
+- **Ward boundaries:** The analysis uses the 198-ward BBMP boundaries, not the current 369-ward Greater Bengaluru Authority boundaries. Re-extracting the data for the new boundaries is the natural next step.
 
 ---
 
-## Reproducibility
+## Reproduction
 
-The project runs in two phases: model training (in the notebook) and API deployment (via the Python script). The serialised model artefacts are pre-committed to the repository, so the API can be exercised without retraining.
+The project has two parts: training the model (in the notebook) and running the API (the Python script). The trained model files are already in the repository, so you can run the API without retraining.
 
 ### 1. Clone the repository
 
@@ -92,15 +96,14 @@ pip install -r requirements.txt
 
 ### 3. (Optional) Retrain the model
 
-Open `Bengaluru LST Prediction API.ipynb` and execute all cells. The final cells write the trained model to `model/lst_model.joblib` and the feature column order to `model/Xcolumn_names.joblib`.
+Open `Bengaluru LST Prediction API.ipynb` and run all cells. The last cells save the trained model to `model/lst_model.joblib` and the feature order to `model/Xcolumn_names.joblib`.
 
 ### 4. Start the API
 
 ```bash
 python LST_predictor.py
 ```
-
-The service starts at `http://127.0.0.1:5000`. Startup will fail with an explicit message if the model artefacts are absent.
+The service starts at `http://127.0.0.1:5000`. It stops with a clear message if the model files are missing.
 
 ### 5. Request a prediction
 
@@ -115,23 +118,20 @@ Expected response:
 ```json
 {"predicted_mean_lst_c": 30.6387}
 ```
-
-To stop the service, send `CTRL + C` in the terminal running it.
-
 ---
 
 ## Related work
 
-- **[bengaluru-uhi-prediction](https://github.com/Rupali-Gauravaram/bengaluru-uhi-prediction)** — Extends this model with diagnostic validation, coefficient interpretation, and a downstream cool-roof prioritisation surfacing the ten wards most suited to thermal-retrofit intervention.
-- **[bengaluru-ward-climate-clustering](https://github.com/Rupali-Gauravaram/bengaluru-ward-climate-clustering)** — Applies unsupervised K-Means to the same 198-ward dataset and produces a ward-typology that independently corroborates the supervised prioritisation.
-- **Part 1: Technical Deep Dive** — [chaiandcode.wordpress.com](https://chaiandcode.wordpress.com/2025/12/12/bengaluru-lst-prediction-api-part-1/)
-- **Part 2: Strategic Vision** — [chaiandcode.wordpress.com](https://chaiandcode.wordpress.com/2025/12/12/bengaluru-lst-prediction-api-part-2/)
-- **[Bengaluru Quorum](https://linkedin.com/company/bengaluru-quorum)** — The climate-intelligence platform for which this prediction service provides foundational infrastructure.
+- **[bengaluru-uhi-prediction](https://github.com/Rupali-Gauravaram/bengaluru-uhi-prediction)**: adds diagnostics, coefficient interpretation, and a cool-roof ranking of the ten wards that would benefit most.
+- **[bengaluru-ward-climate-clustering](https://github.com/Rupali-Gauravaram/bengaluru-ward-climate-clustering)**: K-Means clustering of the same 198 wards, which independently supports the ranking.
+- **Part 1: Technical Deep Dive**: [chaiandcode.wordpress.com](https://chaiandcode.wordpress.com/2025/12/12/bengaluru-lst-prediction-api-part-1/)
+- **Part 2: Strategic Vision**: [chaiandcode.wordpress.com](https://chaiandcode.wordpress.com/2025/12/12/bengaluru-lst-prediction-api-part-2/)
+- **[Bengaluru Quorum](https://linkedin.com/company/bengaluru-quorum)**: the climate-intelligence platform this prediction service was built for.
 
 ---
 
 ## Author
 
-**Rupali Gauravaram** — Climate Tech enthusiast, building [Bengaluru Quorum](https://linkedin.com/company/bengaluru-quorum). MSc Climate Resilience & Environmental Sustainability (University of Liverpool, 2024). Advanced AI/ML certification, IIT Roorkee (August, 2026).
+**Rupali Gauravaram**. MSc Climate Resilience & Environmental Sustainability (University of Liverpool, 2024). Advanced Certification in Data Science & AI (IIT Roorkee).
 
 [LinkedIn](https://linkedin.com/in/rupali99) · [GitHub](https://github.com/Rupali-Gauravaram) · [Blog: Chai & Code](https://chaiandcode.wordpress.com)
